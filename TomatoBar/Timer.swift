@@ -26,6 +26,7 @@ class TBTimer: ObservableObject {
     private var finishTime: Date!
     @Published var timeLeftString: String = ""
     @Published var timer: DispatchSourceTimer?
+    @Published var currentState: String = ""
 
     init() {
         /*
@@ -100,7 +101,7 @@ class TBTimer: ObservableObject {
             seconds % 60
         )
         if timer != nil, showTimerInMenuBar {
-            TBStatusItem.shared.setTitle(title: timeLeftString)
+            TBStatusItem.shared.setTitle(title: "\(currentState) \(timeLeftString)")
         } else {
             TBStatusItem.shared.setTitle(title: nil)
         }
@@ -162,6 +163,7 @@ class TBTimer: ObservableObject {
             player.startTicking()
         }
         startTimer(seconds: workIntervalLength * 60)
+        currentState = "w: "
     }
 
     private func onWorkFinish(context _: TBStateMachine.Context) {
@@ -169,6 +171,7 @@ class TBTimer: ObservableObject {
         if isDingEnabled {
             player.playDing()
         }
+        currentState = ""
     }
 
     private func onWorkEnd(context _: TBStateMachine.Context) {
@@ -192,6 +195,7 @@ class TBTimer: ObservableObject {
         )
         TBStatusItem.shared.setIcon(name: imgName)
         startTimer(seconds: length * 60)
+        currentState = "r: "
     }
 
     private func onRestFinish(context ctx: TBStateMachine.Context) {
@@ -203,6 +207,7 @@ class TBTimer: ObservableObject {
             body: NSLocalizedString("TBTimer.onRestFinish.body", comment: "Break is over body"),
             category: .restFinished
         )
+        currentState = ""
     }
 
     private func onIdleStart(context _: TBStateMachine.Context) {
